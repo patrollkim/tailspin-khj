@@ -1,6 +1,16 @@
 import { test, expect, type Response } from '@playwright/test';
 
 test.describe('Game Listing and Navigation', () => {
+  test('should show a rating or "No rating yet" on every game card', async ({ page }) => {
+    await page.goto('/');
+    const ratings = page.getByTestId('game-card').getByTestId('game-card-rating');
+    const count = await ratings.count();
+    expect(count).toBeGreaterThan(0);
+    for (let i = 0; i < count; i++) {
+      await expect(ratings.nth(i)).toHaveText(/^\s*(No rating yet|[★½☆]{5}\s*[0-5]\.\d \/ 5)\s*$/);
+    }
+  });
+
   test('should display games with titles on index page', async ({ page }) => {
     await test.step('Navigate to homepage', async () => {
       await page.goto('/');
